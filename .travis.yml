@@ -1,30 +1,26 @@
 language: php
-
 php:
-  - '7.2'
-
+- '7.2'
 cache:
   directories:
-    - vendor/
-    - tools/
-
+  - vendor/
+  - tools/
 stages:
-  - test
-  - name: deploy
-    if: tag IS present
-
+- test
+- name: deploy
+  if: tag IS present
 jobs:
   include:
-    - stage: test
-      script: make phpcs
-    - stage: deploy
-      script: skip
-      before_deploy: make dist
-      deploy:
-        provider: releases
-        api_key:
-          secure: $GITHUB_SECURE_TOKEN
-        file: dist/varnish-plus-cli.phar
-        skip_cleanup: true
-        on:
-          tags: true
+  - stage: test
+    script: make phpcs
+  - stage: deploy
+    script: skip
+    before_deploy: make dist
+    deploy:
+      provider: releases
+      api_key:
+        secure: bfoaIRz29zmavD+/jM6D0ikSWJp3QgNM4E9x93RkEKh6nRxgcRZi7bN6PCIGj4EFMaC+s/FnizyLCZAvM2jz4I+Q6uDuy+5dxp5B4BGqD46AmTXcFjAoTX88CMOnVRvxWSvnCkdVKmraI4FQ2eMPwzUi7sNJzMJPGFrTSax4o28jE3YeSTFNaVgel4gTl5Zpy4PSUh4LHchSdWaNUeXMnIaD72G8mYrHYmQ8mRxIBE28lOkYh20XpsIpkxbzEW+Z98qwcmJfI2KnGnyw6Riiw+kp/hRC0Jm0njU2UNrCy7xRZ2Ja8NpcrNaOh1OKlt0KTTTdcxuiailpEfKn2MMHg9Jzot3sQC7lb4C4ATzjG4T3g/LW7lJZ5RSn8pJqXsUmYOJC90bxeGQsQRRtc9FzZAovEpTkCXlj/47Pb/p4wMjzNlHAD00zudo8wZNrnBe2A3dXHdk4aXLVLuD5lObnTH6tv4TZBthW7yGSAUdtMcN48o4RnCGKf+bCTOCpCz4pApcKRPkn2oIsAqp1WZz3OBq+pHDOuZWIygPXMMlgitsafFDjhZD60T0s4TwbFOtZhvxMSLjSk25beJV6IHqUdZJ5MZP7O7qY83tg00I2TygX3pitm+TnVXIbzY7+HxDV3wx0lGertHV7DEIje2eAhL21bcy6sw6HaJp2jbmwF6Q=
+      file: dist/varnish-plus-cli.phar
+      skip_cleanup: true
+      on:
+        tags: true
