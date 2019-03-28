@@ -1,0 +1,10 @@
+{
+  "main": "bin/varnish-plus-cli.php",
+  "output": "dist/varnish-plus-cli.phar",
+  "chmod": "0700",
+  "compression": "GZ",
+  "directories": [
+    "vendor",
+    "src"
+  ]
+}

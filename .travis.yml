@@ -1,0 +1,30 @@
+language: php
+
+php:
+  - '7.2'
+
+cache:
+  directories:
+    - vendor/
+    - tools/
+
+stages:
+  - test
+  - name: deploy
+    if: tag IS present
+
+jobs:
+  include:
+    - stage: test
+      script: make phpcs
+    - stage: deploy
+      script: skip
+      before_deploy: make dist
+      deploy:
+        provider: releases
+        api_key:
+          secure: $GITHUB_SECURE_TOKEN
+        file: dist/varnish-plus-cli.phar
+        skip_cleanup: true
+        on:
+          tags: true
