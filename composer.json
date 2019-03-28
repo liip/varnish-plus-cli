@@ -1,5 +1,5 @@
 {
-    "name": "varnish-plus-cli",
+    "name": "liip/varnish-plus-cli",
     "description": "Tools to concatenate twig files into VCLs",
     "type": "library",
     "license": "MIT",

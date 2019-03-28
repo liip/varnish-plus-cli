@@ -33,4 +33,4 @@ dist: dist/varnish-plus-cli.phar
 clean:
 	rm -Rf tools/ dist/ vendor/
 
-.PHONY: clean phpcs fix-cs
+.PHONY: clean phpcs fix-cs vendor
