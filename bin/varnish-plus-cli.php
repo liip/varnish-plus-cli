@@ -9,7 +9,7 @@ use App\Command\VclDeployCommand;
 use App\Command\VclTwigCompileCommand;
 use Symfony\Component\Console\Application;
 
-$application = new Application();
+$application = new Application('Varnish Plus CLI');
 
 $application->add(new VclTwigCompileCommand());
 $application->add(new VclDeployCommand());
