@@ -1,10 +1,21 @@
 # Varnish Plus CLI
 
+[![Download latest release](https://img.shields.io/github/tag/liip/varnish-plus-cli.svg?label=release)](https://gitreleases.dev/gh/liip/varnish-plus-cli/latest/varnish-plus-cli.phar)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
+[![Build Status](https://api.travis-ci.org/liip/varnish-plus-cli.svg?branch=master)](https://travis-ci.org/liip/varnish-plus-cli)
+
 This self-contained phar (PHP archive) can be used to work with the Varnish Admin Console VAC.
 
 It provides:
 * A command to compile twig templates into a single file.
 * A command to deploy the configuration with the VAC API.
+
+## Installation
+
+```bash
+$ wget https://gitreleases.dev/gh/liip/varnish-plus-cli/latest/varnish-plus-cli.phar
+$ chmod u+x varnish-plus-cli.phar
+```
 
 ## Setup
 
