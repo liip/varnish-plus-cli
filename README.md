@@ -46,17 +46,17 @@ The `vcl:twig:compile` command configures twig on the specified directory and co
 point. You can specify twig variables with the `--twig-variable` option:
 
 ```bash
-$ ./dist/varnish-plus-cli.phar vcl:twig:compile ../varnish-project/templates envs/local.vcl.twig output.vcl --twig-variable maintenance=1 --twig-variable grace=3600
+$ ./varnish-plus-cli.phar vcl:twig:compile ../varnish-project/templates envs/local.vcl.twig output.vcl --twig-variable maintenance=1 --twig-variable grace=3600
 ```
 
-Run `./dist/varnish-plus-cli.phar vcl:twig:compile --help` for a full explanation of all arguments.
+Run `./varnish-plus-cli.phar vcl:twig:compile --help` for a full explanation of all arguments.
 
 ### Deploy a VCL to a VAC instance
 
 `vcl:deploy` takes a VCL file and deploys it to a VAC at the location specified by the vcl name and group.
 
 ```bash
-$ ./dist/varnish-plus-cli.phar vcl:deploy -u https://$HOST --username $USERNAME  --password $PASSWORD --vcl-name $VCL_NAME --vcl-group $VCL_GROUP $FILENAME
+$ ./varnish-plus-cli.phar vcl:deploy -u https://$HOST --username $USERNAME  --password $PASSWORD --vcl-name $VCL_NAME --vcl-group $VCL_GROUP $FILENAME
 ```
 
 Run `./dist/varnish-plus-cli.phar vcl:deploy --help` for a full explanation of all arguments.
