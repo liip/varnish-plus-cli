@@ -17,18 +17,6 @@ $ wget https://gitreleases.dev/gh/liip/varnish-plus-cli/latest/varnish-plus-cli.
 $ chmod u+x varnish-plus-cli.phar
 ```
 
-## Setup
-
-```bash
-$ composer install
-```
-
-### Create `.phar` file
-
-```bash
-$ make dist
-```
-
 ## Usage
 
 There is no configuration file for this tool. The expected usage is that you write a makefile or bash script
@@ -62,6 +50,21 @@ $ ./varnish-plus-cli.phar vcl:deploy -u https://$HOST --username $USERNAME  --pa
 Run `./dist/varnish-plus-cli.phar vcl:deploy --help` for a full explanation of all arguments.
 
 ## Development
+
+### Setup
+
+```bash
+$ git clone ...
+$ composer install
+```
+
+### Create `.phar` file
+
+```bash
+$ make dist
+```
+
+### Code Quality
 
 We use phpstan and php-cs-fixer for code style purposes:
 
