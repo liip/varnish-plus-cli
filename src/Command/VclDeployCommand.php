@@ -30,7 +30,7 @@ class VclDeployCommand extends Command
             ->addOption('password', '', InputOption::VALUE_REQUIRED, 'VAC password [required]')
             ->addOption('vcl-name', '', InputOption::VALUE_REQUIRED, 'VCL name [required]')
             ->addOption('vcl-group', '', InputOption::VALUE_REQUIRED, 'VCL group [required]')
-            ->addOption('verify-tls', '', InputOption::VALUE_REQUIRED, 'Specifies TLS verification. See http://docs.guzzlephp.org/en/stable/request-options.html#verify for possible options', true)
+            ->addOption('verify-tls', '', InputOption::VALUE_REQUIRED, 'Specifies TLS verification, true|false|/path/to/certificate. See http://docs.guzzlephp.org/en/stable/request-options.html#verify for possible options', 'true')
         ;
     }
 
@@ -97,7 +97,7 @@ class VclDeployCommand extends Command
         return 0;
     }
 
-    protected function getArgumentString(InputInterface $input, string $name): string
+    private function getArgumentString(InputInterface $input, string $name): string
     {
         $argument = $input->getArgument($name);
         if (\is_array($argument)) {
@@ -107,7 +107,7 @@ class VclDeployCommand extends Command
         return (string) $argument;
     }
 
-    protected function requireOption(InputInterface $input, string $name)
+    private function requireOption(InputInterface $input, string $name)
     {
         $option = $input->getOption($name);
         if (!$option) {
@@ -117,7 +117,7 @@ class VclDeployCommand extends Command
         return $option;
     }
 
-    protected function boolOrString(string $value)
+    private function boolOrString(string $value)
     {
         switch ($value) {
             case 'true':
@@ -129,7 +129,7 @@ class VclDeployCommand extends Command
         }
     }
 
-    protected function readFile(string $fileName): ?string
+    private function readFile(string $fileName): ?string
     {
         $content = @file_get_contents($fileName);
         if (false === $content) {
