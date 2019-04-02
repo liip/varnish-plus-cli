@@ -49,6 +49,49 @@ $ ./varnish-plus-cli.phar vcl:deploy -u https://$HOST --username $USERNAME  --pa
 
 Run `./dist/varnish-plus-cli.phar vcl:deploy --help` for a full explanation of all arguments.
 
+## Example Makefile
+
+Note: Makefiles work with tabs, not spaces. When copying this example ensure the file is indented with tabs.
+
+```makefile
+DIST_DIR ?= dist
+BIN_DIR ?= bin
+TEMPLATE_DIR ?= templates
+
+all: install compile
+
+install: $(BIN_DIR) $(BIN_DIR)/varnish-plus-cli.phar
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+$(BIN_DIR)/varnish-plus-cli.phar:
+	wget https://gitreleases.dev/gh/liip/varnish-plus-cli/latest/varnish-plus-cli.phar
+	mv varnish-plus-cli.phar $(BIN_DIR)/
+	chmod u+x $(BIN_DIR)/varnish-plus-cli.phar
+
+# Add all possible VCLs you want to generate
+compile: $(DIST_DIR)/dev.vcl $(DIST_DIR)/local.vcl $(DIST_DIR)/dev.maintenance.vcl
+
+# maintenance is an example rule where you specify a custom twig variable which changes something in the VCL to
+# indicate that the current node is in maintenance mode (could be anything, of course).
+$(DIST_DIR)/%.maintenance.vcl:
+	$(BIN_DIR)/varnish-plus-cli.phar vcl:twig:compile --twig-variable maintenance=true $(TEMPLATE_DIR) envs/$*.vcl.twig $@
+
+# this assumes that there's the following directory layout:
+# 
+# .
+# ├── Makefile
+# ├── templates
+# │   └── envs
+#     │   ├── dev.vcl.twig
+#     │   ├── local.vcl.twig
+$(DIST_DIR)/%.vcl:
+	$(BIN_DIR)/varnish-plus-cli.phar vcl:twig:compile $(TEMPLATE_DIR) envs/$*.vcl.twig $@
+
+.PHONY: install compile all
+```
+
 ## Development
 
 ### Setup
