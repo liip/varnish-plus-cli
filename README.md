@@ -58,6 +58,8 @@ DIST_DIR ?= dist
 BIN_DIR ?= bin
 TEMPLATE_DIR ?= templates
 
+TEMPLATE_FILES = $(shell find $(TEMPLATE_DIR) -type f -name '*')
+
 all: install compile
 
 install: $(BIN_DIR) $(BIN_DIR)/varnish-plus-cli.phar
@@ -75,7 +77,7 @@ compile: $(DIST_DIR)/dev.vcl $(DIST_DIR)/local.vcl $(DIST_DIR)/dev.maintenance.v
 
 # maintenance is an example rule where you specify a custom twig variable which changes something in the VCL to
 # indicate that the current node is in maintenance mode (could be anything, of course).
-$(DIST_DIR)/%.maintenance.vcl:
+$(DIST_DIR)/%.maintenance.vcl: $(TEMPLATE_FILES)
 	$(BIN_DIR)/varnish-plus-cli.phar vcl:twig:compile --twig-variable maintenance=true $(TEMPLATE_DIR) envs/$*.vcl.twig $@
 
 # this assumes that there's the following directory layout:
@@ -86,7 +88,7 @@ $(DIST_DIR)/%.maintenance.vcl:
 # │   └── envs
 #     │   ├── dev.vcl.twig
 #     │   ├── local.vcl.twig
-$(DIST_DIR)/%.vcl:
+$(DIST_DIR)/%.vcl: $(TEMPLATE_FILES)
 	$(BIN_DIR)/varnish-plus-cli.phar vcl:twig:compile $(TEMPLATE_DIR) envs/$*.vcl.twig $@
 
 .PHONY: install compile all
