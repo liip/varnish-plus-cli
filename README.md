@@ -1,6 +1,6 @@
 # Varnish Plus CLI
 
-[![Download latest release](https://img.shields.io/github/tag/liip/varnish-plus-cli.svg?label=release)](https://gitreleases.dev/gh/liip/varnish-plus-cli/latest/varnish-plus-cli.phar)
+[![Download latest release](https://img.shields.io/github/tag/liip/varnish-plus-cli.svg?label=release)](https://github.com/liip/varnish-plus-cli/releases/latest/download/varnish-plus-cli.phar)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![Build Status](https://api.travis-ci.org/liip/varnish-plus-cli.svg?branch=master)](https://travis-ci.org/liip/varnish-plus-cli)
 
@@ -13,7 +13,7 @@ It provides:
 ## Installation
 
 ```bash
-$ wget https://gitreleases.dev/gh/liip/varnish-plus-cli/latest/varnish-plus-cli.phar
+$ wget https://github.com/liip/varnish-plus-cli/releases/latest/download/varnish-plus-cli.phar
 $ chmod u+x varnish-plus-cli.phar
 ```
 
@@ -68,7 +68,7 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 $(BIN_DIR)/varnish-plus-cli.phar:
-	wget https://gitreleases.dev/gh/liip/varnish-plus-cli/latest/varnish-plus-cli.phar
+	wget https://github.com/liip/varnish-plus-cli/releases/latest/download/varnish-plus-cli.phar
 	mv varnish-plus-cli.phar $(BIN_DIR)/
 	chmod u+x $(BIN_DIR)/varnish-plus-cli.phar
 
