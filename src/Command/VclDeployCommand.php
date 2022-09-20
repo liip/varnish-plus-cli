@@ -41,12 +41,12 @@ class VclDeployCommand extends Command
         ]);
 
         $vcl = $this->getArgumentString($input, 'vcl');
-        $uri = $this->requireOption($input, 'uri');
-        $username = $this->requireOption($input, 'username');
-        $password = $this->requireOption($input, 'password');
-        $vclName = $this->requireOption($input, 'vcl-name');
-        $vclGroup = $this->requireOption($input, 'vcl-group');
-        $verifyTLS = $this->boolOrString($this->requireOption($input, 'verify-tls'));
+        $uri = $this->requireStringOption($input, 'uri');
+        $username = $this->requireStringOption($input, 'username');
+        $password = $this->requireStringOption($input, 'password');
+        $vclName = $this->requireStringOption($input, 'vcl-name');
+        $vclGroup = $this->requireStringOption($input, 'vcl-group');
+        $verifyTLS = $this->convertToBoolean($this->requireStringOption($input, 'verify-tls'));
 
         $client = new VacClient($uri, $username, $password, $verifyTLS);
         $rollbackID = '';
@@ -107,17 +107,20 @@ class VclDeployCommand extends Command
         return (string) $argument;
     }
 
-    private function requireOption(InputInterface $input, string $name)
+    private function requireStringOption(InputInterface $input, string $name): string
     {
         $option = $input->getOption($name);
         if (!$option) {
             throw new InvalidOptionException($name.' is required');
         }
+        if (!\is_string($option)) {
+            throw new InvalidOptionException($name.' must be of type string but is '.\gettype($option));
+        }
 
         return $option;
     }
 
-    private function boolOrString(string $value)
+    private function convertToBoolean(string $value): bool
     {
         switch ($value) {
             case 'true':
@@ -125,7 +128,7 @@ class VclDeployCommand extends Command
             case 'false':
                 return false;
             default:
-                return $value;
+                return (bool) $value;
         }
     }
 

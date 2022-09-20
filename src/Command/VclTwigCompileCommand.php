@@ -37,13 +37,13 @@ class VclTwigCompileCommand extends Command
             LogLevel::INFO => OutputInterface::VERBOSITY_NORMAL,
         ]);
 
-        $options = [];
+        $context = [];
         foreach ($this->getInputArray($input, 'twig-variable') as $variableDefinition) {
             $variable = explode('=', $variableDefinition, 2);
             if (2 !== \count($variable)) {
                 throw new InvalidArgumentException(sprintf('Variable definition "%s" is not in the form of key=value', $variableDefinition));
             }
-            $options[$variable[0]] = $variable[1];
+            $context[$variable[0]] = $variable[1];
         }
 
         $templateDir = $this->getInputString($input, 'templateDir');
@@ -55,13 +55,16 @@ class VclTwigCompileCommand extends Command
 
         $vclTwigCompiler = new VclTwigCompiler($twig);
 
-        $vclTwigCompiler->compile($rootTemplate, $filename, $options);
+        $vclTwigCompiler->compile($rootTemplate, $filename, $context);
 
         $logger->log('info', 'Compiled VCL template {template} to {filename}', ['template' => $rootTemplate, 'filename' => $filename]);
 
         return 0;
     }
 
+    /**
+     * @return string[]
+     */
     private function getInputArray(InputInterface $input, string $name): array
     {
         $array = $input->getOption($name);
