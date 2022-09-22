@@ -34,8 +34,8 @@ jobs:
 
             - name: Check if we can run the phar
               run: |
-                - ./dist/varnish-plus-cli.phar --version
-                - ./dist/varnish-plus-cli.8.0.phar --version
+                ./dist/varnish-plus-cli.phar --version
+                ./dist/varnish-plus-cli.8.0.phar --version
 
             - name: Create Release
               uses: ncipollo/release-action@v1
