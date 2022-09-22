@@ -22,7 +22,10 @@ class VclTwigCompiler
         $this->twig = $twig;
     }
 
-    public function compile(string $template, string $filename, array $options = []): void
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function compile(string $template, string $filename, array $context = []): void
     {
         $filesystem = new Filesystem();
         $targetFilename = $filesystem->readlink($filename);
@@ -32,7 +35,7 @@ class VclTwigCompiler
 
         $filesystem->mkdir(\dirname($targetFilename));
 
-        $content = $this->twig->render($template, $options);
+        $content = $this->twig->render($template, $context);
         $filesystem->dumpFile($targetFilename, $content);
     }
 }

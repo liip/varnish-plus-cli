@@ -15,7 +15,7 @@ class VacClient
      */
     private $client;
 
-    public function __construct(string $uri, string $username, string $password, $verifyTLS)
+    public function __construct(string $uri, string $username, string $password, bool $verifyTLS)
     {
         $this->client = new Client([
             'base_uri' => $uri,
@@ -28,6 +28,9 @@ class VacClient
         ]);
     }
 
+    /**
+     * @return string[]|null
+     */
     public function getVclID(string $name): ?array
     {
         $response = $this->client->get('/api/v1/vcl/1/100');
@@ -35,7 +38,7 @@ class VacClient
 
         $filtered = array_filter($json['list'], function (array $v) use ($name) {
             return $v['name'] === $name;
-        }, ARRAY_FILTER_USE_BOTH);
+        }, \ARRAY_FILTER_USE_BOTH);
 
         $entry = reset($filtered);
         if (!$entry) {
@@ -65,6 +68,9 @@ class VacClient
         return $json['id'];
     }
 
+    /**
+     * @return string[]
+     */
     public function createEmptyVCL(string $name): array
     {
         $response = $this->client->post('/api/v1/vcl', [
@@ -86,7 +92,7 @@ class VacClient
 
         $filtered = array_filter($json['list'], function (array $v) use ($name) {
             return $v['name'] === $name;
-        }, ARRAY_FILTER_USE_BOTH);
+        }, \ARRAY_FILTER_USE_BOTH);
 
         $entry = reset($filtered);
         if (!$entry) {
@@ -96,6 +102,9 @@ class VacClient
         return $entry['_id']['$oid'];
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function deploy(string $groupID, string $vclID): array
     {
         $response = $this->client->put(sprintf('/api/v1/group/%s/vcl/%s/deploy', $groupID, $vclID));
@@ -105,10 +114,10 @@ class VacClient
         $deployData = $json['deployData'];
         $compilationErrors = array_filter($compilationData, function (array $v) {
             return 200 !== $v['statusCode'];
-        }, ARRAY_FILTER_USE_BOTH);
+        }, \ARRAY_FILTER_USE_BOTH);
         $deployErrors = array_filter($deployData, function (array $v) {
             return 200 !== $v['statusCode'];
-        }, ARRAY_FILTER_USE_BOTH);
+        }, \ARRAY_FILTER_USE_BOTH);
 
         $success = !\count($compilationErrors) && !\count($deployErrors);
 
@@ -123,6 +132,9 @@ class VacClient
         return $json['id'];
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function parseJsonBody(ResponseInterface $response): array
     {
         $body = $response->getBody()->getContents();

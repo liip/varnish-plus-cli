@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.1.0
+-----
+
+* Support PHP 8 with the `varnish-plus-cli.8.0.phar` release artifact
+* Drop support for PHP < 7.4
+* Fixed deployment
+
 1.0.2
 -----
 
