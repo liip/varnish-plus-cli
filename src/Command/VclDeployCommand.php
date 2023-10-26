@@ -76,8 +76,7 @@ class VclDeployCommand extends Command
             throw new InvalidOptionException($vclGroup.' needs to be a valid group name');
         }
 
-        $logger->log(
-            'info', 'Deploying VCL {id} to group {groupID}', ['id' => $vclID, 'groupID' => $groupID]);
+        $logger->info('Deploying VCL {id} to group {groupID}', ['id' => $vclID, 'groupID' => $groupID]);
         [$success, $compilationData, $deployData] = $client->deploy($groupID, $vclID);
         if (!$success) {
             $logger->log('error', 'Deployment failed');
