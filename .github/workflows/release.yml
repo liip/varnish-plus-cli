@@ -7,36 +7,36 @@ on:
 
 jobs:
     build:
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-latest
         steps:
-            - name: Setup PHP
+            - name: Check out code into the workspace
+              uses: actions/checkout@v3
+            - name: Setup PHP 8.2
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: '8.0'
-                  coverage: none
-                  ini-values: phar.readonly=0
-
-            - name: Checkout Code
-              uses: actions/checkout@v2
-
+                  php-version: "8.2"
+                  tools: humbug/box:^4.5
+            - name: Get composer cache directory
+              id: composer-cache
+              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+            - name: Cache dependencies
+              uses: actions/cache@v3
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+                  restore-keys: ${{ runner.os }}-composer-
+            - name: Install libraries via Composer
+              run: composer update --prefer-dist --no-interaction --no-dev
             - name: Determine version name
               id: get-version
               run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
-
             - name: Update application version
               run: sed -i 's/Varnish Plus CLI/Varnish Plus CLI ${{ steps.get-version.outputs.version }}/g' bin/varnish-plus-cli.php && cat bin/varnish-plus-cli.php
-
-            - name: Build PHP 7.4 phar with makefile
-              run: make dist
-
-            - name: Build PHP 8.0 phar with makefile
-              run: make dist-php8
-
+            - name: Run Box
+              run: box --verbose
             - name: Check if we can run the phar
               run: |
                 ./dist/varnish-plus-cli.phar --version
-                ./dist/varnish-plus-cli.8.0.phar --version
-
             - name: Create Release
               uses: ncipollo/release-action@v1
               with:
@@ -46,5 +46,5 @@ jobs:
                   name: ${{ steps.get-version.outputs.version }}
                   tag: ${{ steps.get-version.outputs.version }}
                   body: 'Stable release.'
-                  artifacts: ./dist/varnish-plus-cli.phar, ./dist/varnish-plus-cli.8.0.phar
+                  artifacts: ./dist/varnish-plus-cli.phar
                   artifactContentType: application/x-php
