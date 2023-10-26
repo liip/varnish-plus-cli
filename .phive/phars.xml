@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<phive xmlns="https://phar.io/phive">
+  <phar name="humbug/box" version="^4.5" installed="4.5.0" location="./tools/box" copy="true"/>
+  <phar name="php-cs-fixer" version="^3.26" installed="3.35.1" location="./tools/php-cs-fixer" copy="true"/>
+  <phar name="phpstan" version="^1.10" installed="1.10.39" location="./tools/phpstan" copy="true"/>
+</phive>
