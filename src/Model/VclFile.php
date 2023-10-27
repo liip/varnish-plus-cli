@@ -1,32 +1,25 @@
 <?php
 
-namespace App;
+namespace App\Model;
 
 class VclFile
 {
-    public int $id;
-    public string $source;
+    public ?int $id = null;
+    public ?string $source = null;
 
-
-    public function __construct(array $payload = null)
-    {
-        if(null !== $payload) {
-            $this->fillFromPayload($payload);
-        }
-    }
-
-    public function fillFromPayload(array $payload): void
+    public static function fromArray(array $payload): self
     {
         if(array_key_exists('id', $payload) && array_key_exists('source', $payload)) {
-            $this->setId($payload['id']);
-            $this->setSource($payload['source']);
+            $vclFile = new static();
+            $vclFile->setId((int)$payload['id']);
+            $vclFile->setSource($payload['source']);
         }
     }
 
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -42,7 +35,7 @@ class VclFile
     /**
      * @return string
      */
-    public function getSource(): string
+    public function getSource(): ?string
     {
         return $this->source;
     }

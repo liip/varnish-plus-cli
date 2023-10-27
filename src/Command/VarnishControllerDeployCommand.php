@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Model\VclFile;
 use App\VacClient;
 use App\VarnishControllerClient;
-use App\VclFile;
 use Pnz\JsonException\Json;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
@@ -21,6 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class VarnishControllerDeployCommand extends Command
 {
     protected static $defaultName = 'varnish:controller:deploy';
+    private VarnishControllerClient $client;
+    private ConsoleLogger $logger;
 
     protected function configure(): void
     {
@@ -38,7 +40,7 @@ class VarnishControllerDeployCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $logger = new ConsoleLogger($output, [
+        $this->logger = new ConsoleLogger($output, [
             LogLevel::INFO => OutputInterface::VERBOSITY_NORMAL,
         ]);
 
@@ -50,51 +52,28 @@ class VarnishControllerDeployCommand extends Command
         $vclGroup = $this->requireStringOption($input, 'vcl-group');
         $verifyTLS = $this->convertToBoolean($this->requireStringOption($input, 'verify-tls'));
 
-        $client = new VarnishControllerClient($uri, $username, $password, $verifyTLS);
+        $this->client = new VarnishControllerClient($uri, $username, $password, $verifyTLS);
         $rollbackID = '';
 
+        $groupID = $this->client->getGroupID($vclGroup);
 
-        /**
-         * 1. get VCL ID by name and the content (source)
-         * 2. check if input $vclInput is set
-         * 3. check if input $vclInput is same as source from call in point 1.
-         * 3.1 if it's different get a rollbackId
-         * 3.2 update VCL with newVCL
-         * 4.
-         */
-
-        $groupID = $client->getGroupID($vclGroup);
-
-        #region start
-        $vclFile = new VclFile(
-            $client->getVclIdAndSource($vclName)
-        );
-        #endregion
-
-
-
-
-
-        if (!$vclFile->getId()) {
-            $vclFile->fillFromPayload(
-                $client->createEmptyVCL($vclName,$groupID)
-            );
-            $logger->log('info', 'Created default VCL for {name} as ID {id}', ['name' => $vclName, 'id' => $vclFile->getId()]);
-        }
+        $vclFile = $this->initVclFile();
 
         $newVclSource = $this->readFile($vclInput);
+
         if (!$newVclSource) {
             throw new \InvalidArgumentException(sprintf('Filename "%s" is not readable.', $vclInput));
         }
-        if ($newVclSource === $vclFile->getSource()) {
-            $logger->log('info', 'VCL did not change, will not update');
-        } else {
-            //todo
-            $rollbackID = $client->getHead($vclFile->getId());
-            $logger->log('info', 'Using VCL {id} which head is {rollbackID}', ['id' => $vclFile->getId(), 'rollbackID' => $rollbackID]);
 
-            $vclCommit = $client->updateVCL($vclFile->getId(), $newVclSource);
-            $logger->log('info', 'Pushed new VCL with the commit ID {id}', ['id' => $vclCommit]);
+        if ($newVclSource === $vclFile->getSource()) {
+            $this->logger->log('info', 'VCL did not change, will not update');
+        } else {
+            //todo rollback
+            //$rollbackID = $this->client->getHead($vclFile->getId());
+            //$this->>logger->log('info', 'Using VCL {id} which head is {rollbackID}', ['id' => $vclFile->getId(), 'rollbackID' => $rollbackID]);
+
+            $vclCommit = $this->client->updateVCL($vclFile->getId(), $newVclSource);
+            $this->logger->log('info', 'Pushed new VCL with the commit ID {id}', ['id' => $vclCommit]);
         }
 
 
@@ -102,25 +81,38 @@ class VarnishControllerDeployCommand extends Command
             throw new InvalidOptionException($vclGroup.' needs to be a valid group name');
         }
 
-        $logger->log(
-            'info', 'Deploying VCL {id} to group {groupID}', ['id' => $vclID, 'groupID' => $groupID]);
-        [$success, $compilationData, $deployData] = $client->deploy($groupID, $vclID);
-        if (!$success) {
-            $logger->log('error', 'Deployment failed');
-            $logger->log('error', 'Compilation errors: {errors}', ['errors' => Json::encode($compilationData)]);
-            $logger->log('error', 'Deployment errors: {errors}', ['errors' => Json::encode($deployData)]);
+        $this->logger->log(
+            'info', 'Deploying VCL {id} to group {groupID}', ['id' => $vclFile->getId(), 'groupID' => $groupID]);
 
-            $id = $client->rollback($vclID, $rollbackID);
-            $logger->log('info', 'Rolled VCL {vclID} back to {id}', ['vclID' => $vclID, 'id' => $id]);
+        try {
+            $this->client->deploy($groupID, $vclFile->getId());
+            $this->logger->log('info', 'Successfully deployed VCL {id} to group {groupID}', ['id' => $vclFile->getId(), 'groupID' => $groupID]);
+
+            return 0;
+        } catch (\ErrorException $errorException) {
+            $this->logger->log('error', 'Deployment failed');
+
+            //todo rollback
+            //$id = $this->client->rollback($vclFile->getId(), $rollbackID);
+            //$this->>logger->log('info', 'Rolled VCL {vclID} back to {id}', ['vclID' => $vclFile->getId(), 'id' => $id]);
 
             return 1;
         }
+    }
 
-        $logger->log('info', 'Successfully deployed VCL {id} to group {groupID}', ['id' => $vclID, 'groupID' => $groupID]);
-        $logger->log('info', 'Compilation data: {data}', ['data' => Json::encode($compilationData)]);
-        $logger->log('info', 'Deployment data: {data}', ['data' => Json::encode($deployData)]);
+    private function initVclFile(string $vclName, int $groupId): VclFile
+    {
+        $vclFile = VclFile::fromArray(
+            $this->client->getVclIdAndSource($vclName)
+        );
 
-        return 0;
+        if (!$vclFile->getId()) {
+            $vclFile = VclFile::fromArray(
+                $this->client->createEmptyVCL($vclName,$groupId)
+            );
+            $this->logger->log('info', 'Created default VCL for {name} as ID {id}', ['name' => $vclName, 'id' => $vclFile->getId()]);
+        }
+        return $vclFile;
     }
 
     private function getArgumentString(InputInterface $input, string $name): string

@@ -41,7 +41,7 @@ class VarnishControllerClient
 
         $responseObject = json_decode($loginClient->post('/api/v1/auth/login')->getBody()->getContents());
 
-        if(null !== $responseObject && property_exists($responseObject, 'accessToken') && !empty($responseObject->accessToken)) {
+        if (null !== $responseObject && property_exists($responseObject, 'accessToken') && !empty($responseObject->accessToken)) {
             return $responseObject->accessToken;
         }
         return null;
@@ -138,27 +138,51 @@ class VarnishControllerClient
     }
 
     /**
-     * @return array<mixed>
+     * @param int $vclGroupId
+     * @param int $vclId
+     * @return bool
+     * @throws \ErrorException
      */
-    public function deploy(string $groupID, string $vclID): array
+    public function deploy(int $vclGroupId, int $vclId): bool
     {
+        $response = $this->client->put("/api/v1/vclgroups/{$vclGroupId}/deploy");
+
+        if (200 === $response->getStatusCode()) {
+            return true;
+        } else {
+            $json = $this->parseJsonBody($response);
+            throw new \ErrorException(
+                $json['errorMsg']
+            );
+        }
+
+        /*
+         * todo check what's needed
         $response = $this->client->put(sprintf('/api/v1/group/%s/vcl/%s/deploy', $groupID, $vclID));
         $json = $this->parseJsonBody($response);
 
         $compilationData = $json['compilationData'];
         $deployData = $json['deployData'];
+
         $compilationErrors = array_filter($compilationData, function (array $v) {
             return 200 !== $v['statusCode'];
         }, \ARRAY_FILTER_USE_BOTH);
+
         $deployErrors = array_filter($deployData, function (array $v) {
             return 200 !== $v['statusCode'];
         }, \ARRAY_FILTER_USE_BOTH);
 
         $success = !\count($compilationErrors) && !\count($deployErrors);
 
-        return [$success, $compilationData, $deployData];
+        return [$success, $compilationData, $deployData];*/
     }
 
+    /**
+     * todo check if needed
+     * @param string $vclID
+     * @param string $rollbackID
+     * @return string
+     */
     public function rollback(string $vclID, string $rollbackID): string
     {
         $response = $this->client->post(sprintf('/api/v1/vcl/%s/push/%s', $vclID, $rollbackID));
