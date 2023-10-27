@@ -48,7 +48,6 @@ class VarnishControllerClient
     }
 
     /**
-     * @done
      * @return string[]|null
      */
     public function getVclIdAndSource(string $name): ?array
@@ -77,7 +76,6 @@ class VarnishControllerClient
     }
 
     /**
-     * @done
      * @param int $vclID
      * @param string $source
      * @return string
@@ -95,7 +93,6 @@ class VarnishControllerClient
     }
 
     /**
-     * @done
      * @return string[]
      */
     public function createEmptyVCL(string $name, int $vclGroupId): array
@@ -116,7 +113,6 @@ class VarnishControllerClient
     }
 
     /**
-     * @done
      * @param string $name
      * @return int|null
      */
