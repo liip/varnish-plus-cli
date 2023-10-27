@@ -9,11 +9,12 @@ class VclFile
 
     public static function fromArray(array $payload): self
     {
+        $vclFile = new static();
         if(array_key_exists('id', $payload) && array_key_exists('source', $payload)) {
-            $vclFile = new static();
             $vclFile->setId((int)$payload['id']);
             $vclFile->setSource($payload['source']);
         }
+        return $vclFile;
     }
 
     /**
