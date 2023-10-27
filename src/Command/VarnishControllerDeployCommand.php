@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Model\VclFile;
-use App\VacClient;
 use App\VarnishControllerClient;
-use Pnz\JsonException\Json;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
