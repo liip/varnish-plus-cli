@@ -9,17 +9,9 @@ use Twig\Environment;
 
 class VclTwigCompiler
 {
-    public const MAINTENANCE_FLAG = 'maintenance';
-
-    /**
-     * @var Environment
-     */
-    private $twig;
-
     public function __construct(
-        Environment $twig
+        private readonly Environment $twig
     ) {
-        $this->twig = $twig;
     }
 
     /**
