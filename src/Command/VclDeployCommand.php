@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\VacClient;
-use Pnz\JsonException\Json;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -77,12 +76,15 @@ class VclDeployCommand extends Command
         }
 
         $logger->log(
-            'info', 'Deploying VCL {id} to group {groupID}', ['id' => $vclID, 'groupID' => $groupID]);
+            'info',
+            'Deploying VCL {id} to group {groupID}',
+            ['id' => $vclID, 'groupID' => $groupID]
+        );
         [$success, $compilationData, $deployData] = $client->deploy($groupID, $vclID);
         if (!$success) {
             $logger->log('error', 'Deployment failed');
-            $logger->log('error', 'Compilation errors: {errors}', ['errors' => Json::encode($compilationData)]);
-            $logger->log('error', 'Deployment errors: {errors}', ['errors' => Json::encode($deployData)]);
+            $logger->log('error', 'Compilation errors: {errors}', ['errors' => json_encode($compilationData, \JSON_THROW_ON_ERROR)]);
+            $logger->log('error', 'Deployment errors: {errors}', ['errors' => json_encode($deployData, \JSON_THROW_ON_ERROR)]);
 
             $id = $client->rollback($vclID, $rollbackID);
             $logger->log('info', 'Rolled VCL {vclID} back to {id}', ['vclID' => $vclID, 'id' => $id]);
@@ -91,8 +93,8 @@ class VclDeployCommand extends Command
         }
 
         $logger->log('info', 'Successfully deployed VCL {id} to group {groupID}', ['id' => $vclID, 'groupID' => $groupID]);
-        $logger->log('info', 'Compilation data: {data}', ['data' => Json::encode($compilationData)]);
-        $logger->log('info', 'Deployment data: {data}', ['data' => Json::encode($deployData)]);
+        $logger->log('info', 'Compilation data: {data}', ['data' => json_encode($compilationData, \JSON_THROW_ON_ERROR)]);
+        $logger->log('info', 'Deployment data: {data}', ['data' => json_encode($deployData, \JSON_THROW_ON_ERROR)]);
 
         return 0;
     }
@@ -122,14 +124,11 @@ class VclDeployCommand extends Command
 
     private function convertToBoolean(string $value): bool
     {
-        switch ($value) {
-            case 'true':
-                return true;
-            case 'false':
-                return false;
-            default:
-                return (bool) $value;
-        }
+        return match ($value) {
+            'true' => true,
+            'false' => false,
+            default => (bool) $value,
+        };
     }
 
     private function readFile(string $fileName): ?string

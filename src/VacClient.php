@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace App;
 
 use GuzzleHttp\Client;
-use Pnz\JsonException\Json;
 use Psr\Http\Message\ResponseInterface;
 
 class VacClient
 {
-    /**
-     * @var Client
-     */
-    private $client;
+    private Client $client;
 
     public function __construct(string $uri, string $username, string $password, bool $verifyTLS)
     {
@@ -36,7 +32,7 @@ class VacClient
         $response = $this->client->get('/api/v1/vcl/1/100');
         $json = $this->parseJsonBody($response);
 
-        $filtered = array_filter($json['list'], function (array $v) use ($name) {
+        $filtered = array_filter($json['list'], static function (array $v) use ($name) {
             return $v['name'] === $name;
         }, \ARRAY_FILTER_USE_BOTH);
 
@@ -59,9 +55,9 @@ class VacClient
     public function updateVCL(string $vclID, string $content): string
     {
         $response = $this->client->post(sprintf('/api/v1/vcl/%s/push', $vclID), [
-            'body' => Json::encode([
+            'body' => json_encode([
                 'content' => $content,
-            ]),
+            ], \JSON_THROW_ON_ERROR),
         ]);
         $json = $this->parseJsonBody($response);
 
@@ -74,11 +70,11 @@ class VacClient
     public function createEmptyVCL(string $name): array
     {
         $response = $this->client->post('/api/v1/vcl', [
-            'body' => Json::encode([
+            'body' => json_encode([
                 'name' => $name,
                 'description' => 'Empty VCL',
                 'content' => 'vcl 4.0;',
-            ]),
+            ], \JSON_THROW_ON_ERROR),
         ]);
         $json = $this->parseJsonBody($response);
 
@@ -90,7 +86,7 @@ class VacClient
         $response = $this->client->get('/api/v1/group/1/100');
         $json = $this->parseJsonBody($response);
 
-        $filtered = array_filter($json['list'], function (array $v) use ($name) {
+        $filtered = array_filter($json['list'], static function (array $v) use ($name) {
             return $v['name'] === $name;
         }, \ARRAY_FILTER_USE_BOTH);
 
@@ -112,10 +108,10 @@ class VacClient
 
         $compilationData = $json['compilationData'];
         $deployData = $json['deployData'];
-        $compilationErrors = array_filter($compilationData, function (array $v) {
+        $compilationErrors = array_filter($compilationData, static function (array $v) {
             return 200 !== $v['statusCode'];
         }, \ARRAY_FILTER_USE_BOTH);
-        $deployErrors = array_filter($deployData, function (array $v) {
+        $deployErrors = array_filter($deployData, static function (array $v) {
             return 200 !== $v['statusCode'];
         }, \ARRAY_FILTER_USE_BOTH);
 
@@ -139,6 +135,6 @@ class VacClient
     {
         $body = $response->getBody()->getContents();
 
-        return Json::decode($body, true);
+        return json_decode($body, true, 512, \JSON_THROW_ON_ERROR);
     }
 }

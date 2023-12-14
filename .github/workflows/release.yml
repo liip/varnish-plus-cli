@@ -12,7 +12,7 @@ jobs:
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: '8.0'
+                  php-version: '8.1'
                   coverage: none
                   ini-values: phar.readonly=0
 
@@ -26,16 +26,12 @@ jobs:
             - name: Update application version
               run: sed -i 's/Varnish Plus CLI/Varnish Plus CLI ${{ steps.get-version.outputs.version }}/g' bin/varnish-plus-cli.php && cat bin/varnish-plus-cli.php
 
-            - name: Build PHP 7.4 phar with makefile
+            - name: Build phar with makefile
               run: make dist
-
-            - name: Build PHP 8.0 phar with makefile
-              run: make dist-php8
 
             - name: Check if we can run the phar
               run: |
                 ./dist/varnish-plus-cli.phar --version
-                ./dist/varnish-plus-cli.8.0.phar --version
 
             - name: Create Release
               uses: ncipollo/release-action@v1
@@ -46,5 +42,5 @@ jobs:
                   name: ${{ steps.get-version.outputs.version }}
                   tag: ${{ steps.get-version.outputs.version }}
                   body: 'Stable release.'
-                  artifacts: ./dist/varnish-plus-cli.phar, ./dist/varnish-plus-cli.8.0.phar
+                  artifacts: ./dist/varnish-plus-cli.phar
                   artifactContentType: application/x-php
