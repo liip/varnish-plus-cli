@@ -2,7 +2,7 @@
 
 [![Download latest release](https://img.shields.io/github/tag/liip/varnish-plus-cli.svg?label=release)](https://github.com/liip/varnish-plus-cli/releases/latest/download/varnish-plus-cli.phar)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
-[![Build Status](https://api.travis-ci.org/liip/varnish-plus-cli.svg?branch=master)](https://travis-ci.org/liip/varnish-plus-cli)
+[![CI](https://github.com/liip/varnish-plus-cli/actions/workflows/ci.yaml/badge.svg)](https://github.com/liip/varnish-plus-cli/actions/workflows/ci.yaml)
 
 This self-contained phar (PHP archive) can be used to work with the Varnish Admin Console VAC.
 
@@ -81,7 +81,7 @@ $(DIST_DIR)/%.maintenance.vcl: $(TEMPLATE_FILES)
 	$(BIN_DIR)/varnish-plus-cli.phar vcl:twig:compile --twig-variable maintenance=true $(TEMPLATE_DIR) envs/$*.vcl.twig $@
 
 # this assumes that there's the following directory layout:
-# 
+#
 # .
 # ├── Makefile
 # ├── templates

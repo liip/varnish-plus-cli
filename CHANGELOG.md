@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.2.0
+-----
+
+* Drop support for PHP 7. We no longer
+
 1.1.0
 -----
 
