@@ -9,7 +9,7 @@ on:
 jobs:
     latest:
         name: PHP ${{ matrix.php }}
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
@@ -23,15 +23,14 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
-                  tools: composer:v2
                   coverage: none
 
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: Update dependencies for PHP 8
               if: matrix.php >= '8.0'
               run: composer update --prefer-dist --no-interaction --no-progress --no-ansi
 
-            - name: Execute 7 tests
+            - name: Execute tests
               run: make phpcs

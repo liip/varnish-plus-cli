@@ -17,17 +17,18 @@ tools/box:
 	chmod +x tools/box
 
 tools/php-cs-fixer:
-	wget --directory-prefix=tools --quiet https://cs.symfony.com/download/php-cs-fixer-v3.phar
-	mv tools/php-cs-fixer-v3.phar tools/php-cs-fixer
+	wget --directory-prefix=tools --quiet https://github.com/php-cs-fixer/php-cs-fixer/releases/download/v3.41.1/php-cs-fixer.phar
+	mv tools/php-cs-fixer.phar tools/php-cs-fixer
 	chmod +x tools/php-cs-fixer
 
 tools/phpstan:
-	wget --directory-prefix=tools --quiet https://github.com/phpstan/phpstan/releases/download/1.8.5/phpstan.phar
+	wget --directory-prefix=tools --quiet https://github.com/phpstan/phpstan/releases/download/1.10.50/phpstan.phar
 	mv tools/phpstan.phar tools/phpstan
 	chmod +x tools/phpstan
 
-phpcs: vendor tools/php-cs-fixer tools/phpstan
+phpcs: vendor tools/box tools/php-cs-fixer tools/phpstan
 	composer validate --strict --no-check-lock
+	tools/box validate
 	tools/php-cs-fixer fix --dry-run --stop-on-violation -v
 	tools/phpstan analyze --level=7 --no-progress bin/ src/
 
