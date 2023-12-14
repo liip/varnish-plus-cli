@@ -1,10 +1,10 @@
 Changelog
 =========
 
-1.2.0
+1.1.1
 -----
 
-* Drop support for PHP 7. We no longer
+* Cleaned up build pipeline. No functionality changes.
 
 1.1.0
 -----
