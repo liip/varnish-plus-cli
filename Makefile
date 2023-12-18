@@ -23,7 +23,7 @@ phpcs: vendor tools/box tools/php-cs-fixer tools/phpstan
 	composer validate --strict --no-check-lock
 	tools/box validate
 	tools/php-cs-fixer fix --dry-run --stop-on-violation -v
-	tools/phpstan analyze --level=7 --no-progress bin/ src/
+	tools/phpstan analyze --no-progress
 
 vendor:
 	composer install --optimize-autoloader --no-dev --no-suggest --quiet
