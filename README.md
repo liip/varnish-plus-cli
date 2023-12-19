@@ -4,11 +4,11 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![CI](https://github.com/liip/varnish-plus-cli/actions/workflows/ci.yaml/badge.svg)](https://github.com/liip/varnish-plus-cli/actions/workflows/ci.yaml)
 
-This self-contained phar (PHP archive) can be used to work with the Varnish Admin Console VAC.
+This self-contained phar (PHP archive) can be used to work with the commercial version of Varnish.
 
 It provides:
 * A command to compile twig templates into a single file.
-* A command to deploy the configuration with the VAC API.
+* Commands to deploy the configuration to the Varnish Controller or the legacy Varnish Admin Console (VAC).
 
 ## Installation
 
@@ -24,9 +24,11 @@ that calls the tool with the right arguments.
 
 ### Compile the VCL with twig
 
-The VAC only supports one single VCL file. It is good practice to separate your VCL into several files for better
-overview. With twig, instead of VCL statement `include "sub.vcl`, you will use the twig instruction
-`{% include 'sub.vcl.twig' %}`.
+The VAC only supports one single VCL file. Varnish Controller would support multiple files, but it is simpler to manage
+a single file on the server.
+
+It is good practice to separate your VCL into several files for better readability. With Twig, instead of VCL statement
+`include "sub.vcl`, you will use the twig instruction `{% include 'sub.vcl.twig' %}`.
 
 Additionally, you can use variables in twig, e.g. to handle different environments.
 
@@ -39,15 +41,25 @@ $ ./varnish-plus-cli.phar vcl:twig:compile ../varnish-project/templates envs/loc
 
 Run `./varnish-plus-cli.phar vcl:twig:compile --help` for a full explanation of all arguments.
 
-### Deploy a VCL to a VAC instance
+### Deploy a VCL to a Varnish Controller instance
 
-`vcl:deploy` takes a VCL file and deploys it to a VAC at the location specified by the vcl name and group.
+`varnish-controller:deploy` takes a VCL file and deploys it to a Varnish Controller into the specified group.
 
 ```bash
-$ ./varnish-plus-cli.phar vcl:deploy -u https://$HOST --username $USERNAME  --password $PASSWORD --vcl-name $VCL_NAME --vcl-group $VCL_GROUP $FILENAME
+$ ./varnish-plus-cli.phar vac:deploy -u https://$HOST --organization $ORGANIZATION --username $USERNAME  --password $PASSWORD --vcl-name $VCL_NAME --vcl-group $VCL_GROUP $FILENAME
 ```
 
-Run `./dist/varnish-plus-cli.phar vcl:deploy --help` for a full explanation of all arguments.
+Run `./dist/varnish-plus-cli.phar varnish-controller:deploy --help` for a full explanation of all arguments.
+
+### Deploy a VCL to a VAC instance
+
+`vac:deploy` takes a VCL file and deploys it to a VAC at the location specified by the vcl name and group.
+
+```bash
+$ ./varnish-plus-cli.phar vac:deploy -u https://$HOST --username $USERNAME  --password $PASSWORD --vcl-name $VCL_NAME --vcl-group $VCL_GROUP $FILENAME
+```
+
+Run `./dist/varnish-plus-cli.phar vac:deploy --help` for a full explanation of all arguments.
 
 ## Example Makefile
 

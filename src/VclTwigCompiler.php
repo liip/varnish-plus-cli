@@ -7,7 +7,7 @@ namespace App;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment;
 
-class VclTwigCompiler
+final class VclTwigCompiler
 {
     public function __construct(
         private readonly Environment $twig

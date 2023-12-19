@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-class VclTwigCompileCommand extends Command
+final class VclTwigCompileCommand extends Command
 {
     protected static $defaultName = 'vcl:twig:compile';
 
@@ -57,7 +57,7 @@ class VclTwigCompileCommand extends Command
 
         $vclTwigCompiler->compile($rootTemplate, $filename, $context);
 
-        $logger->log('info', 'Compiled VCL template {template} to {filename}', ['template' => $rootTemplate, 'filename' => $filename]);
+        $logger->info('Compiled VCL template {template} to {filename}', ['template' => $rootTemplate, 'filename' => $filename]);
 
         return 0;
     }
