@@ -10,7 +10,7 @@ Changelog
 * Drop support for PHP 7 and PHP 8.0
 * Only provide CLI for PHP 8.1 or newer as varnish-plus-cli.phar
 * Upgraded the bundled libraries to new versions
-* Added client for the new Varnish Controller
+* Added client `varnish-controller:deploy` for the new Varnish Controller
   * The Varnish Controller additionally needs the organization parameter
   * The filename must have the `.vcl` extension, it is no longer magically added
 * Renamed the VAC deployment command from `vcl:deploy` to `vac:deploy`.
