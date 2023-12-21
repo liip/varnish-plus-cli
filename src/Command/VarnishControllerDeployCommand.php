@@ -16,10 +16,11 @@ final class VarnishControllerDeployCommand extends BaseDeployCommand
 {
     protected function configure(): void
     {
+        $this->envPrefix = 'VARNISH_CONTROLLER';
         $this
             ->setName('varnish-controller:deploy')
             ->setDescription('Deploy compiled VCL to the Varnish Controller')
-            ->addOption('organization', '', InputOption::VALUE_REQUIRED, 'Organization [required]')
+            ->addOption('organization', '', InputOption::VALUE_REQUIRED, 'Organization , default from env variable '.$this->envPrefix.'_ORGANIZATION [required]')
         ;
         parent::configure();
     }

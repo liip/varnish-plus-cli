@@ -13,7 +13,9 @@ Changelog
 * Added client `varnish-controller:deploy` for the new Varnish Controller
   * The Varnish Controller additionally needs the organization parameter
   * The filename must have the `.vcl` extension, it is no longer magically added
+  * In addition to flags to the command, this command also takes configuration from environment variables starting with `VARNISH_CONTROLLER_`
 * Renamed the VAC deployment command from `vcl:deploy` to `vac:deploy`.
+  * In addition to flags to the command, this command also takes configuration from environment variables starting with `VAC_`
 
 1.x
 ===

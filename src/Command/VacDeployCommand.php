@@ -15,6 +15,7 @@ final class VacDeployCommand extends BaseDeployCommand
 {
     protected function configure(): void
     {
+        $this->envPrefix = 'VAC';
         $this
             ->setName('vac:deploy')
             ->setDescription('Deploy compiled VCL to legacy Varnish Admin Console (VAC)')
