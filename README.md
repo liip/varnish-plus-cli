@@ -19,8 +19,8 @@ $ chmod u+x varnish-plus-cli.phar
 
 ## Usage
 
-There is no configuration file for this tool. The expected usage is that you write a makefile or bash script
-that calls the tool with the right arguments.
+There is no configuration file for this tool. The expected usage is that you provide the necessary arguments as
+environment variables or write a makefile or bash script that calls the tool with the right arguments.
 
 ### Compile the VCL with twig
 
@@ -45,8 +45,18 @@ Run `./varnish-plus-cli.phar vcl:twig:compile --help` for a full explanation of 
 
 `varnish-controller:deploy` takes a VCL file and deploys it to a Varnish Controller into the specified group.
 
+You can provide most settings with environment variables:
+* VARNISH_CONTROLLER_URI: API domain of the varnish controller
+* VARNISH_CONTROLLER_ORGANIZATION: The organization name to use for the login
+* VARNISH_CONTROLLER_USERNAME: Username for the login
+* VARNISH_CONTROLLER_PASSWORD: Password for the login
+* VARNISH_CONTROLLER_VCL_NAME: Filename on the server
+* VARNISH_CONTROLLER_VCL_GROUP: Group to use on the server
+
+If the command option is set and the environment variable exists, the option wins.
+
 ```bash
-$ ./varnish-plus-cli.phar vac:deploy -u https://$HOST --organization $ORGANIZATION --username $USERNAME  --password $PASSWORD --vcl-name $VCL_NAME --vcl-group $VCL_GROUP $FILENAME
+$ ./varnish-plus-cli.phar varnish-controller:deploy --uri https://localhost --organization my-organization --username my-username  --password my-password --vcl-name name-on-server.vcl --vcl-group my-group output.vcl
 ```
 
 Run `./dist/varnish-plus-cli.phar varnish-controller:deploy --help` for a full explanation of all arguments.
@@ -55,8 +65,17 @@ Run `./dist/varnish-plus-cli.phar varnish-controller:deploy --help` for a full e
 
 `vac:deploy` takes a VCL file and deploys it to a VAC at the location specified by the vcl name and group.
 
+You can provide most settings with environment variables:
+* VAC_URI: API domain of the VAC
+* VAC_USERNAME: Username for the login
+* VAC_PASSWORD: Password for the login
+* VAC_VCL_NAME: Filename on the server
+* VAC_VCL_GROUP: Group to use on the server
+
+If the command option is set and the environment variable exists, the option wins.
+
 ```bash
-$ ./varnish-plus-cli.phar vac:deploy -u https://$HOST --username $USERNAME  --password $PASSWORD --vcl-name $VCL_NAME --vcl-group $VCL_GROUP $FILENAME
+$ ./varnish-plus-cli.phar vac:deploy --uri https://localhost --username my-username  --password my-password --vcl-name name-on-server.vcl --vcl-group my-group output.vcl
 ```
 
 Run `./dist/varnish-plus-cli.phar vac:deploy --help` for a full explanation of all arguments.
