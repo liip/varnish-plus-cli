@@ -13,7 +13,7 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    latest:
+    tests:
         name: PHP ${{ matrix.php }}
         runs-on: ubuntu-latest
         strategy:
@@ -38,3 +38,19 @@ jobs:
 
             - name: Execute tests
               run: make phpcs
+
+    dependabot-automerge:
+        name: Auto-merge Dependabot PRs
+        needs: tests # only on successful tests
+        runs-on: ubuntu-latest
+
+        permissions:
+            pull-requests: write # needed so dependabot can approve
+            contents: write # needed so dependabot can merge
+
+        steps:
+            - name: Auto-merge Dependabot PRs
+              uses: fastify/github-action-merge-dependabot@1b2ed42db8f9d81a46bac83adedfc03eb5149dff # v3
+              with:
+                  # only automerge patch & minor semver bumps
+                  target: minor
