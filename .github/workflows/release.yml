@@ -5,26 +5,39 @@ on:
         tags:
             - '*'
 
+permissions: {}
+
+concurrency:
+    group: global
+    cancel-in-progress: false
+
 jobs:
     build:
+        name: Release
         runs-on: ubuntu-latest
+        permissions:
+            contents: write # required for Create Release step
         steps:
             - name: Setup PHP
-              uses: shivammathur/setup-php@v2
+              uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2
               with:
                   php-version: '8.1'
                   coverage: none
                   ini-values: phar.readonly=0
 
             - name: Checkout Code
-              uses: actions/checkout@v3
+              uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+              with:
+                persist-credentials: false
 
             - name: Determine version name
               id: get-version
               run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
 
             - name: Update application version
-              run: sed -i 's/Varnish Plus CLI/Varnish Plus CLI ${{ steps.get-version.outputs.version }}/g' bin/varnish-plus-cli.php && cat bin/varnish-plus-cli.php
+              env:
+                  STEPS_GET_VERSION_OUTPUTS_VERSION: ${{ steps.get-version.outputs.version }}
+              run: sed -i 's/Varnish Plus CLI/Varnish Plus CLI ${STEPS_GET_VERSION_OUTPUTS_VERSION}/g' bin/varnish-plus-cli.php && cat bin/varnish-plus-cli.php
 
             - name: Build phar with makefile
               run: make dist
@@ -34,13 +47,10 @@ jobs:
                 ./dist/varnish-plus-cli.phar --version
 
             - name: Create Release
-              uses: ncipollo/release-action@v1
-              with:
-                  # This token is provided by GitHub Actions.
-                  # You DO NOT need to create your own token.
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  name: ${{ steps.get-version.outputs.version }}
-                  tag: ${{ steps.get-version.outputs.version }}
-                  body: 'Stable release.'
-                  artifacts: ./dist/varnish-plus-cli.phar
-                  artifactContentType: application/x-php
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  VERSION: ${{ steps.get-version.outputs.version }}
+              run: |
+                  gh release create "$VERSION" ./dist/varnish-plus-cli.phar \
+                    --title "$VERSION" \
+                    --notes "Stable release."
