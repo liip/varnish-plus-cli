@@ -4,6 +4,11 @@ Changelog
 2.x
 ===
 
+2.0.1
+-----
+
+* Upgraded dependencies
+
 2.0.0
 -----
 
