@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-type: "all"
+    groups:
+      symfony-updates:
+        patterns:
+          - "symfony/*"
+        update-types:
+          - "minor"
+          - "patch"
+      minor-updates:
+        update-types:
+          - "minor"
+          - "patch"
+    cooldown:
+      default-days: 7
